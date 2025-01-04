@@ -27,7 +27,7 @@ function App() {
     const result = [];
     for (let i = 0; i < arr.length; i++) {
       const current = arr[i];
-      const remaining = arr.slice(0, i).concat(arr.slice(i+1));
+      const remaining = arr.slice(0, i).concat(arr.slice(i + 1));
       const permsOfRemaining = getPermutations(remaining);
       for (let perm of permsOfRemaining) {
         result.push([current, ...perm]);
@@ -52,8 +52,9 @@ function App() {
 
   const submitLetters = () => {
     // Extract only letters and convert to lowercase
-    const newLetters = (letterInput.toLowerCase().match(/[a-z]/g) || []);
-    const sortedLetters = [...letters, ...newLetters].sort();
+    if (!letterInput) return;
+
+    const sortedLetters = [...letters, ...letterInput].sort();
     setLetters(sortedLetters);
     setLetterInput("");
   };
@@ -65,23 +66,21 @@ function App() {
   const handleWordKeyPress = (e) => {
     if (e.key === 'Enter') {
       if (canFormWord(wordInput, letters)) {
-        // Only add if it doesn't already exist
-        if (!words.includes(wordInput)) {
-          let tempLetters = [...letters];
-          for (let w of wordInput) {
-            const index = tempLetters.indexOf(w);
-            if (index > -1) {
-              tempLetters.splice(index, 1);
-            }
+        let tempLetters = [...letters];
+        for (let w of wordInput) {
+          const index = tempLetters.indexOf(w);
+          if (index > -1) {
+            tempLetters.splice(index, 1);
           }
-          // Sort letters after removal
-          tempLetters.sort();
-          setLetters(tempLetters);
-
-          const newWords = [...words, wordInput];
-          newWords.sort();
-          setWords(newWords);
         }
+        // Sort letters after removal
+        tempLetters.sort();
+        setLetters(tempLetters);
+
+        const newWords = [...words, wordInput];
+        newWords.sort();
+        setWords(newWords);
+
         setWordInput("");
       }
     }
@@ -99,8 +98,7 @@ function App() {
     const word = words[index];
     // Return letters to the pool (ensure uniqueness and sort)
     setLetters(prev => {
-      const combined = [...prev, ...word.split('')];
-      return Array.from(new Set(combined)).sort();
+      return [...prev, ...word.split('')].sort();
     });
 
     setWords(prev => {
@@ -122,13 +120,13 @@ function App() {
   return (
     <div style={{ padding: '20px', fontFamily: 'sans-serif' }}>
       <h1>Alan(The)zoka Challenge</h1>
-      
+
       <div style={{ marginBottom: '20px' }}>
         <label>
           Letters:
-          <input 
-            type="text" 
-            value={letterInput} 
+          <input
+            type="text"
+            value={letterInput}
             onChange={e => setLetterInput(e.target.value)}
             onKeyPress={handleLetterKeyPress}
             onBlur={submitLetters}
@@ -137,12 +135,12 @@ function App() {
           />
         </label>
       </div>
-      
+
       <div style={{ marginBottom: '20px' }}>
         <label>
           Word:
-          <input 
-            type="text" 
+          <input
+            type="text"
             value={wordInput}
             onChange={handleWordChange}
             onKeyPress={handleWordKeyPress}
@@ -156,15 +154,15 @@ function App() {
         <h2>Letters</h2>
         <div className="box" style={{ border: '1px solid #ccc', padding: '10px', minHeight: '50px' }}>
           {letters.map((letter, index) => (
-            <span 
-              key={index} 
-              onDoubleClick={() => removeLetter(index)} 
-              style={{ 
-                display: 'inline-block', 
-                margin: '5px', 
-                padding: '5px', 
-                background: '#eee', 
-                cursor: 'pointer' 
+            <span
+              key={index}
+              onDoubleClick={() => removeLetter(index)}
+              style={{
+                display: 'inline-block',
+                margin: '5px',
+                padding: '5px',
+                background: '#eee',
+                cursor: 'pointer'
               }}
               title="Double click to remove"
             >
@@ -178,16 +176,16 @@ function App() {
         <h2>Words</h2>
         <div className="box" style={{ border: '1px solid #ccc', padding: '10px', minHeight: '50px' }}>
           {words.map((word, index) => (
-            <span 
-              key={index} 
-              onDoubleClick={() => removeWord(index)} 
+            <span
+              key={index}
+              onDoubleClick={() => removeWord(index)}
               onClick={() => copyToClipboard(word)}
-              style={{ 
-                display: 'inline-block', 
-                margin: '5px', 
-                padding: '5px', 
-                background: '#cdf0ff', 
-                cursor: 'pointer' 
+              style={{
+                display: 'inline-block',
+                margin: '5px',
+                padding: '5px',
+                background: '#cdf0ff',
+                cursor: 'pointer'
               }}
               title="Double click to remove, click to copy"
             >
